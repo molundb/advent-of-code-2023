@@ -7,7 +7,7 @@ fun main() {
     val input = readInput("day02/Day02_input")
 
     print(solvePartOne(input))
-//    solvePartTwo(input)
+    print(solvePartTwo(input))
 }
 
 private fun solvePartOne(input: List<String>): Int {
@@ -35,12 +35,14 @@ private fun solvePartOne(input: List<String>): Int {
                     }
                     j += 5
                 }
+
                 'b' -> {
                     if (c > 14) {
                         possible = false
                     }
                     j += 6
                 }
+
                 'g' -> {
                     if (c > 13) {
                         possible = false
@@ -51,13 +53,59 @@ private fun solvePartOne(input: List<String>): Int {
         }
 
         if (possible) {
-            sum += i+1
+            sum += i + 1
         }
     }
 
     return sum
 }
 
-private fun solvePartTwo(input: List<String>) {
+private fun solvePartTwo(input: List<String>): Int {
+    var sum = 0
 
+    for (i in input.indices) {
+        var maxRed = 0
+        var maxBlue = 0
+        var maxGreen = 0
+
+        val content = input[i].split(':')[1]
+        var j = 1
+        while (j < content.length) {
+            val s = StringBuilder()
+
+            while (content[j].isDigit()) {
+                s.append(content[j])
+                j++
+            }
+            val c = s.toString().toInt()
+
+            j += 1
+            when (content[j]) {
+                'r' -> {
+                    if (c > maxRed) {
+                        maxRed = c
+                    }
+                    j += 5
+                }
+
+                'b' -> {
+                    if (c > maxBlue) {
+                        maxBlue = c
+                    }
+                    j += 6
+                }
+
+                'g' -> {
+                    if (c > maxGreen) {
+                        maxGreen = c
+                    }
+                    j += 7
+                }
+            }
+        }
+
+        sum += maxRed * maxBlue * maxGreen
+    }
+
+    return sum
 }
