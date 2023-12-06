@@ -2,12 +2,13 @@ package day03
 
 import readInput
 import java.lang.StringBuilder
+import kotlin.math.abs
 
 fun main() {
     val input = readInput("day03/Day03_input")
 
-    print(solvePartOne(input))
-//    print(solvePartTwo(input))
+//    print(solvePartOne(input))
+    print(solvePartTwo(input))
 }
 
 private fun solvePartOne(input: List<String>): Int {
@@ -98,7 +99,77 @@ private fun addNumberIfAdjacentSymbol(
 
 private fun Char.isSymbol() = !this.isDigit() && this != '.'
 
+private fun solvePartTwo(input: List<String>): Int {
+    var sum = 0
+    val numbers = mutableListOf<Number>()
 
-private fun solvePartTwo(input: List<String>) {
+    for (i in input.indices) {
+        val line = input[i]
 
+        val numberBuilder = StringBuilder()
+
+        for (j in line.indices) {
+            val c = line[j]
+
+            if (c.isDigit()) {
+                numberBuilder.append(c)
+            }
+
+            if (numberBuilder.isNotEmpty() && (!c.isDigit() || j == line.length - 1)) {
+                val number = Number(
+                    number = numberBuilder.toString().toInt(),
+                    startPoint = Point(
+                        x = i,
+                        y = j-numberBuilder.length
+                    ),
+                    endPoint = Point(
+                        x = i,
+                        y = j-1
+                    )
+                )
+                numberBuilder.clear()
+
+                numbers.add(number)
+            }
+        }
+    }
+
+    for (i in input.indices) {
+        val line = input[i]
+
+        for (j in line.indices) {
+            val c = line[j]
+
+            if (c == '*') {
+                val adjacentNumbers = mutableListOf<Int>()
+                val starPoint = Point(i, j)
+                for (number in numbers) {
+                    if (starPoint.isAdjacentTo(number.startPoint) ||
+                        starPoint.isAdjacentTo(number.endPoint)) {
+                        adjacentNumbers.add(number.number)
+                    }
+                }
+
+                if (adjacentNumbers.size >= 2) {
+                    sum += adjacentNumbers[0] * adjacentNumbers[1]
+                }
+            }
+        }
+    }
+
+    return sum
 }
+
+private fun Point.isAdjacentTo(other: Point) =
+    abs(this.x - other.x) <= 1 && abs(this.y - other.y) <= 1
+
+class Number(
+    val number: Int,
+    val startPoint: Point,
+    val endPoint: Point
+)
+
+class Point(
+    val x: Int,
+    val y: Int,
+)
